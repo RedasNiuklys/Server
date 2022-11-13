@@ -15,7 +15,7 @@ if (!process.env.PORT) {
     process.exit(1);
 }
 const PORT = parseInt(process.env.PORT, 10);
-// Connection to HTTPS server
+//Connection to HTTPS server
 // const privateKey  = fs.readFileSync('./certs/key-rsa.pem', 'utf8');
 // const certificate = fs.readFileSync('./certs/cert.pem', 'utf8');
 // const credentials = {key: privateKey, cert: certificate};

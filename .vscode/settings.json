@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/4258c3df-d629-44e3-90dd-56ba7ed65c38/AppServices/subscriptions/4258c3df-d629-44e3-90dd-56ba7ed65c38/resourceGroups/buspark_group/providers/Microsoft.Web/sites/busparks",
+    "appService.deploySubpath": "."
+}

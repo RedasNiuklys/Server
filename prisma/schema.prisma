@@ -6,6 +6,8 @@ datasource db {
   provider = "mysql"
 
   url      = env("DATABASE_URL")
+ // url = DATABASE_URL="mysql://adminas:Papirusas1@busparkdatabase.mysql.database.azure.com:3306/buspark?sslcert=../certs/DigiCertGlobalRootCA.crt.pem";
+
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.

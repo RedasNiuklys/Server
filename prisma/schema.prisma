@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+
+  url      = env("DATABASE_URL")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model bus {
+  VIN             String        @id @db.VarChar(18)
+  routeId         Int?
+  NumberPlate     String        @db.VarChar(15)
+  Tech_Inspection DateTime      @map("Tech.Inspection") @db.Date
+  Mileage         Int
+  StandingSpaces  Int           @default(0)
+  SittingSpaces   Int
+  WC              Boolean
+  createdAt       DateTime      @default(now()) @db.Timestamp(0)
+  modifiedAt      DateTime      @default(now()) @db.Timestamp(0) @updatedAt
+  route           route?        @relation(fields: [routeId], references: [Id], map: "routeReference")
+  likedbusses     likedbusses[]
+
+  @@index([routeId], map: "routeReference")
+}
+
+model park {
+  Id           Int       @id @default(autoincrement())
+  workHours    Json
+  City         String    @db.VarChar(50)
+  Street       String    @db.VarChar(50)
+  Number       String    @db.VarChar(6)
+  routesNumber Int
+  createdAt    DateTime? @default(now()) @db.Timestamp(0)
+  modifiedAt   DateTime  @default(now()) @db.Timestamp(0) @updatedAt
+  route        route[]
+}
+
+model route {
+  Id            Int       @id @default(autoincrement())
+  parkId        Int
+  Stops         String    @db.Text
+  StartTime     DateTime  @db.Time(0)
+  EndTime       DateTime  @db.Time(0)
+  Late          Boolean
+  LateBy        DateTime? @db.Time(0)
+  International Boolean
+  createdAt     DateTime  @default(now()) @db.Timestamp(0)
+  modifiedAt    DateTime  @default(now()) @db.Timestamp(0) @updatedAt
+  park          park      @relation(fields: [parkId], references: [Id], onDelete: Cascade, map: "parkReference")
+  bus           bus[]
+
+  @@index([parkId], map: "parkReference")
+}
+
+model likedbusses {
+  Id     Int    @id @default(autoincrement())
+  userId Int
+  busId  String @db.VarChar(18)
+  bus    bus    @relation(fields: [busId], references: [VIN], onDelete: Cascade, map: "busReference")
+  user   user   @relation(fields: [userId], references: [Id], onDelete: Cascade, map: "userReference")
+
+  @@index([busId], map: "busReference")
+  @@index([userId], map: "userReference")
+}
+
+model user {
+  Id          Int           @id @default(autoincrement())
+  Email       String        @db.VarChar(50)
+  Username    String        @db.VarChar(30)
+  Password    String        @db.VarChar(32)
+  IsAdmin     Boolean       @default(false)
+  createdAt   DateTime      @default(now()) @db.Timestamp(0)
+  modifiedAt  DateTime      @default(now()) @db.Timestamp(0)
+  likedbusses likedbusses[]
+}

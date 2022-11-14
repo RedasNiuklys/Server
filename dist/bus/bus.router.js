@@ -75,7 +75,7 @@ exports.busRouter.post("/", (0, express_validator_1.body)("VIN").isLength({ min:
     try {
         const bus = req.body;
         const newBus = yield busService.createBus(bus);
-        if (!newBus) {
+        if (newBus == null) {
             return res.status(400).json("Specified VIN already exist");
         }
         return res.status(201).json(newBus);

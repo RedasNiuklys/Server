@@ -64,7 +64,6 @@ userRouter.post('createNewUser', async (req:Request,res:Response)  => {
         {
             return res.sendStatus(403).json("Permission denied");   
         }
-        req.body.
     }
     catch{
         return res.sendStatus(401).json("Invalid token");

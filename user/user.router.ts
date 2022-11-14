@@ -63,11 +63,11 @@ userRouter.post('/createNewUser', async (req:Request,res:Response)  => {
     const token = req.header("Authorization")?.replace('Bearer ', '');
     if (token == null) return res.status(401).json("You need viable token");
     try{
-        console.log(token);
-        console.log(process.env.TOKEN_SECRET);
+        //console.log(token);
+        //console.log(process.env.TOKEN_SECRET);
 
         const decoded = jwt.verify(token, process.env.TOKEN_SECRET)
-        console.log(decoded);
+        //console.log(decoded);
         if(!decoded.isAdmin)
         {
             return res.status(403).json("Permission denied");   

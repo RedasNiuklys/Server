@@ -46,6 +46,7 @@ userRouter.post('createNewUser', async (req:Request,res:Response)  => {
     // ...
   
     const token = generateAccessToken(req.params.Username);
+    console.log(token);
     res.json(token);
   
     // ...

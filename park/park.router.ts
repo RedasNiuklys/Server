@@ -1,6 +1,7 @@
 import express from "express";
 import { Request,Response } from "express";
 import {body, param, query, validationResult} from "express-validator";
+import { authenticateToken } from "../user/user.router";
 import * as parkService from "./park.service";
 
 export const parkRouter = express.Router();
@@ -102,6 +103,7 @@ async (req:Request,res:Response) =>
 // POST: Create
 // Params : workHours,City,Street,Number,routesNumber
 parkRouter.post("/",
+authenticateToken,
 body("City").isString(),
 body("Street").isString(),
 body("Number").isString(),
@@ -125,6 +127,7 @@ async (req:Request,res:Response) => {
 
 // Update PUT
 parkRouter.put("/:id",
+authenticateToken,
 param("id").isNumeric(),
 body("workHours").optional(),
 body("City").optional().isString(),
@@ -154,6 +157,7 @@ async (req:Request,res:Response) => {
 )
 // Delete park DELETE
 parkRouter.delete("/:id",
+authenticateToken,
 param("id").isNumeric(),
 async (req:Request,res:Response) => {
     const id : number = parseInt(req.params.id,10);

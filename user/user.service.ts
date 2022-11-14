@@ -16,6 +16,12 @@ export type UserDTO = {
     IsAdmin : boolean,
 
 };
+export type UserDTOToken = {
+    Id : number,
+    Email : string,
+    IsAdmin : boolean,
+
+}
 export const login =async (email :string ) : Promise<UserDTO | null> =>{
     return db.user.findFirst( 
         {

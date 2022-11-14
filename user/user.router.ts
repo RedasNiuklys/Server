@@ -16,10 +16,11 @@ body("Username").isString(),
 async (req:Request,res:Response) =>
 {
     const errors = validationResult(req)
-    const username = req.params.Username;
+    const username = req.body.Username;
     if(!errors.isEmpty()){
         return res.status(400).json({errors : errors.array()})
     }
+    return res.status(200).json("Can Login");
 })
 
 // POST: Create
@@ -42,31 +43,39 @@ userRouter.post("/register", async (req:Request,res:Response) => {
     }
 }
 );
-userRouter.post('createNewUser', async (req:Request,res:Response)  => {
+userRouter.post('/createNewUser', async (req:Request,res:Response)  => {
     // ...
-  
-    const token = generateAccessToken(req.params.Username);
+    console.log("I am working");
+    console.log(req.params.Email);
+    console.log(process.env.TOKEN_SECRET)
+    const token = generateAccessToken(req.body);
     console.log(token);
     res.json(token);
   
     // ...
   });
 
-  function generateAccessToken(email : string){
-    return jwt.sign(email, process.env.TOKEN_SECRET, { expiresIn: '300s' });
+  function generateAccessToken(user : userService.UserDTOToken){
+    return jwt.sign({id : user.Id,email : user.Email,isAdmin : user.IsAdmin},
+         process.env.TOKEN_SECRET, { expiresIn: '1h' });
   }
   export function authenticateToken(req : Request, res : Response, next : NextFunction ) {
-    const token = req.header("Authorization")?.replace('Bearer ',"")  
-    if (token == null) return res.sendStatus(401).json("You need viable token");
+    const token = req.header("Authorization")?.replace('Bearer ', '');
+    if (token == null) return res.status(401).json("You need viable token");
     try{
-        const decoded : userService.UserDTO = jwt.verify(token, process.env.TOKEN_SECRET as string)
-        if(!decoded.IsAdmin)
+        console.log(token);
+        console.log(process.env.TOKEN_SECRET);
+
+        const decoded = jwt.verify(token, process.env.TOKEN_SECRET)
+        console.log(decoded);
+        if(!decoded.isAdmin)
         {
-            return res.sendStatus(403).json("Permission denied");   
+            return res.status(403).json("Permission denied");   
         }
+        res.setHeader("Authorization",token);
     }
     catch{
-        return res.sendStatus(401).json("Invalid token");
+        return res.status(401).json("Invalid token");
     }
     return next()
 }

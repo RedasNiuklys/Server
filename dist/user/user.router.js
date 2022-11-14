@@ -47,10 +47,11 @@ process.env.TOKEN_SECRET;
 // Get one 
 exports.userRouter.get("/login", (0, express_validator_1.body)("Username").isString(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
-    const username = req.params.Username;
+    const username = req.body.Username;
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
+    return res.status(200).json("Can Login");
 }));
 // POST: Create
 exports.userRouter.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -70,29 +71,36 @@ exports.userRouter.post("/register", (req, res) => __awaiter(void 0, void 0, voi
         return res.status(500).json(error.message);
     }
 }));
-exports.userRouter.post('createNewUser', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.userRouter.post('/createNewUser', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // ...
-    const token = generateAccessToken(req.params.Username);
+    console.log("I am working");
+    console.log(req.params.Email);
+    console.log(process.env.TOKEN_SECRET);
+    const token = generateAccessToken(req.body);
     console.log(token);
     res.json(token);
     // ...
 }));
-function generateAccessToken(email) {
-    return jwt.sign(email, process.env.TOKEN_SECRET, { expiresIn: '300s' });
+function generateAccessToken(user) {
+    return jwt.sign({ id: user.Id, email: user.Email, isAdmin: user.IsAdmin }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
 }
 function authenticateToken(req, res, next) {
     var _a;
-    const token = (_a = req.header("Authorization")) === null || _a === void 0 ? void 0 : _a.replace('Bearer ', "");
+    const token = (_a = req.header("Authorization")) === null || _a === void 0 ? void 0 : _a.replace('Bearer ', '');
     if (token == null)
-        return res.sendStatus(401).json("You need viable token");
+        return res.status(401).json("You need viable token");
     try {
+        console.log(token);
+        console.log(process.env.TOKEN_SECRET);
         const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
-        if (!decoded.IsAdmin) {
-            return res.sendStatus(403).json("Permission denied");
+        console.log(decoded);
+        if (!decoded.isAdmin) {
+            return res.status(403).json("Permission denied");
         }
+        res.setHeader("Authorization", token);
     }
     catch (_b) {
-        return res.sendStatus(401).json("Invalid token");
+        return res.status(401).json("Invalid token");
     }
     return next();
 }

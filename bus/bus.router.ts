@@ -56,7 +56,7 @@ async (req:Request,res:Response) => {
     try{
         const bus = req.body;
         const newBus= await busService.createBus(bus);
-        if(!newBus){
+        if(newBus == null){
             return res.status(400).json("Specified VIN already exist");
         }
         return res.status(201).json(newBus);

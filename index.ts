@@ -6,6 +6,7 @@ import cors from 'cors';
 import {parkRouter} from "./park/park.router";
 import {routeRouter} from "./route/route.router";
 import {busRouter} from "./bus/bus.router";
+import { userRouter } from './user/user.router';
 
 
 // Port check
@@ -17,16 +18,16 @@ if(!process.env.PORT)
 const PORT : number = parseInt(process.env.PORT as string,10); 
 
 //Connection to HTTPS server
-// const privateKey  = fs.readFileSync('./certs/key-rsa.pem', 'utf8');
-// const certificate = fs.readFileSync('./certs/cert.pem', 'utf8');
-// const credentials = {key: privateKey, cert: certificate};
+const privateKey  = fs.readFileSync('./certs/key-rsa.pem', 'utf8');
+const certificate = fs.readFileSync('./certs/cert.pem', 'utf8');
+const credentials = {key: privateKey, cert: certificate};
 const app : Express = express();
 
-// var httpsServer = https.createServer(credentials, app);
+var httpsServer = https.createServer(credentials, app);
 app.use(cors());
 app.use(express.json());
 
-app.listen(PORT,()=>
+httpsServer.listen(PORT,()=>
 console.log("Listening on Port 8000"))
 
 
@@ -34,6 +35,8 @@ console.log("Listening on Port 8000"))
 app.use("/api/parks", parkRouter);
 app.use("/api/routes",routeRouter);
 app.use("/api/busses",busRouter)
+app.use("/api/users",userRouter);
+
 
 
 

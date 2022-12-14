@@ -74,8 +74,8 @@ model user {
   Id          Int           @id @default(autoincrement())
   Email       String        @db.VarChar(50)
   Username    String        @db.VarChar(30)
-  Password    String        @db.VarChar(32)
-  IsAdmin     Boolean       @default(false)
+  Password    String        @db.VarChar(64)
+  AccessLevel Int           @default(1)
   createdAt   DateTime      @default(now()) @db.Timestamp(0)
   modifiedAt  DateTime      @default(now()) @db.Timestamp(0)
   likedbusses likedbusses[]

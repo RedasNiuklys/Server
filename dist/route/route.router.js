@@ -38,6 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.routeRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const express_validator_1 = require("express-validator");
+const user_router_1 = require("../user/user.router");
 const routeService = __importStar(require("./route.service"));
 exports.routeRouter = express_1.default.Router();
 exports.routeRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -68,7 +69,7 @@ exports.routeRouter.get("/:id", (0, express_validator_1.param)("id").isNumeric()
     }
 }));
 // POST: Create
-exports.routeRouter.post("/", (0, express_validator_1.body)("parkId").isNumeric(), (0, express_validator_1.body)("Stops").isString(), (0, express_validator_1.body)("StartTime").isISO8601().toDate(), (0, express_validator_1.body)("EndTime").isISO8601().toDate(), (0, express_validator_1.body)("Late").isBoolean(), (0, express_validator_1.body)("International").isBoolean(), (0, express_validator_1.body)("LateBy").isISO8601().toDate(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.routeRouter.post("/", user_router_1.authenticateTokenAdmin, (0, express_validator_1.body)("parkId").isNumeric(), (0, express_validator_1.body)("Stops").isString(), (0, express_validator_1.body)("StartTime").isISO8601().toDate(), (0, express_validator_1.body)("EndTime").isISO8601().toDate(), (0, express_validator_1.body)("Late").isBoolean(), (0, express_validator_1.body)("International").isBoolean(), (0, express_validator_1.body)("LateBy").isISO8601().toDate(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -88,7 +89,7 @@ exports.routeRouter.post("/", (0, express_validator_1.body)("parkId").isNumeric(
 // Update PUT
 // Params : workHours,City,Street,Number,routesNumber
 // Check if there is logic to test return value
-exports.routeRouter.put("/:id", (0, express_validator_1.param)("id").isNumeric(), (0, express_validator_1.body)("parkId").optional().isNumeric(), (0, express_validator_1.body)("Stops").optional().isString(), (0, express_validator_1.body)("StartTime").optional().isISO8601().toDate(), (0, express_validator_1.body)("EndTime").optional().isISO8601().toDate(), (0, express_validator_1.body)("Late").optional().isBoolean(), (0, express_validator_1.body)("International").optional().isBoolean(), (0, express_validator_1.body)("LateBy").optional().isISO8601().toDate(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.routeRouter.put("/:id", user_router_1.authenticateTokenAdmin, (0, express_validator_1.param)("id").isNumeric(), (0, express_validator_1.body)("parkId").optional().isNumeric(), (0, express_validator_1.body)("Stops").optional().isString(), (0, express_validator_1.body)("StartTime").optional().isISO8601().toDate(), (0, express_validator_1.body)("EndTime").optional().isISO8601().toDate(), (0, express_validator_1.body)("Late").optional().isBoolean(), (0, express_validator_1.body)("International").optional().isBoolean(), (0, express_validator_1.body)("LateBy").optional().isISO8601().toDate(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -107,7 +108,7 @@ exports.routeRouter.put("/:id", (0, express_validator_1.param)("id").isNumeric()
     }
 }));
 // Delete route DELETE
-exports.routeRouter.delete("/:id", (0, express_validator_1.param)("id").isNumeric(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.routeRouter.delete("/:id", user_router_1.authenticateTokenAdmin, (0, express_validator_1.param)("id").isNumeric(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = parseInt(req.params.id, 10);
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
@@ -125,7 +126,7 @@ exports.routeRouter.delete("/:id", (0, express_validator_1.param)("id").isNumeri
     }
 }));
 // Edge cases for Post,put,patch,delete
-exports.routeRouter.post("/:id", (0, express_validator_1.param)("id").isNumeric(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.routeRouter.post("/:id", user_router_1.authenticateTokenAdmin, (0, express_validator_1.param)("id").isNumeric(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });

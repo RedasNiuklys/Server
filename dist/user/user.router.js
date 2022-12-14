@@ -35,21 +35,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authenticateToken = exports.userRouter = void 0;
+exports.authenticateTokenCurrUser = exports.authenticateTokenAdmin = exports.userRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const express_validator_1 = require("express-validator");
 const userService = __importStar(require("./user.service"));
+const busService = __importStar(require("../bus/bus.service"));
 exports.userRouter = express_1.default.Router();
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
 process.env.TOKEN_SECRET;
 // Get one 
-exports.userRouter.get("/login", (0, express_validator_1.body)("Username").isString(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.userRouter.post("/login", (0, express_validator_1.body)("Email").isString(), (0, express_validator_1.body)("Password").isString(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
-    const username = req.body.Username;
+    const email = req.body.Email;
+    const password = req.body.Password;
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
+    }
+    const user = yield userService.login(email, password);
+    if (user == null) {
+        return res.status(401).json("Wrong email or password");
     }
     return res.status(200).json("Can Login");
 }));
@@ -73,28 +79,28 @@ exports.userRouter.post("/register", (req, res) => __awaiter(void 0, void 0, voi
 }));
 exports.userRouter.post('/createNewUser', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // ...
-    console.log("I am working");
-    console.log(req.params.Email);
-    console.log(process.env.TOKEN_SECRET);
+    // console.log(req.body.Email);
+    // console.log(process.env.TOKEN_SECRET)
+    // console.log(req.body.AccessLevel)
     const token = generateAccessToken(req.body);
-    console.log(token);
+    console.log(req.body);
     res.json(token);
     // ...
 }));
 function generateAccessToken(user) {
-    return jwt.sign({ id: user.Id, email: user.Email, isAdmin: user.IsAdmin }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
+    return jwt.sign({ id: user.Id, email: user.Email, AccessLevel: user.AccessLevel }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
 }
-function authenticateToken(req, res, next) {
+function authenticateTokenAdmin(req, res, next) {
     var _a;
     const token = (_a = req.header("Authorization")) === null || _a === void 0 ? void 0 : _a.replace('Bearer ', '');
     if (token == null)
         return res.status(401).json("You need viable token");
     try {
-        console.log(token);
-        console.log(process.env.TOKEN_SECRET);
+        //console.log(token);
+        //console.log(process.env.TOKEN_SECRET);
         const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
         console.log(decoded);
-        if (!decoded.isAdmin) {
+        if (decoded.accessLevel != 2) {
             return res.status(403).json("Permission denied");
         }
         res.setHeader("Authorization", token);
@@ -104,4 +110,51 @@ function authenticateToken(req, res, next) {
     }
     return next();
 }
-exports.authenticateToken = authenticateToken;
+exports.authenticateTokenAdmin = authenticateTokenAdmin;
+function authenticateTokenCurrUser(userId, req, res) {
+    var _a;
+    const token = (_a = req.header("Authorization")) === null || _a === void 0 ? void 0 : _a.replace('Bearer ', '');
+    if (token == null)
+        return res.status(401).json("You need viable token");
+    try {
+        const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+        console.log(decoded);
+        if (decoded.id != userId) {
+            return res.status(403).json("Permission denied");
+        }
+        res.setHeader("Authorization", token);
+    }
+    catch (_b) {
+        return res.status(401).json("Invalid token");
+    }
+    return res.status(200).json("Correct token");
+}
+exports.authenticateTokenCurrUser = authenticateTokenCurrUser;
+exports.userRouter.get("/:id", authenticateTokenCurrUser, (0, express_validator_1.param)("id").isNumeric(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = parseInt(req.params.id, 10);
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    try {
+        const user = yield userService.getUser(id);
+        if (user) {
+            return res.status(200).json(user);
+        }
+        return res.status(404).json("No user found with given Id");
+    }
+    catch (error) {
+        console.log(error.message);
+        return res.status(500).json(error.message);
+    }
+}));
+exports.userRouter.get(":id/busses", authenticateTokenCurrUser, (0, express_validator_1.param)("id").isNumeric(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = parseInt(req.params.id, 10);
+    try {
+        const bus = yield busService.getLikedBusses(id);
+        return res.status(200).json(bus);
+    }
+    catch (error) {
+        return res.status(500).json(error.message);
+    }
+}));

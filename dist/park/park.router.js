@@ -115,7 +115,7 @@ exports.parkRouter.get("/:id", (0, express_validator_1.param)("id").isNumeric(),
 }));
 // POST: Create
 // Params : workHours,City,Street,Number,routesNumber
-exports.parkRouter.post("/", user_router_1.authenticateToken, (0, express_validator_1.body)("City").isString(), (0, express_validator_1.body)("Street").isString(), (0, express_validator_1.body)("Number").isString(), (0, express_validator_1.body)("routesNumber").isInt({ min: 1 }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.parkRouter.post("/", user_router_1.authenticateTokenAdmin, (0, express_validator_1.body)("City").isString(), (0, express_validator_1.body)("Street").isString(), (0, express_validator_1.body)("Number").isString(), (0, express_validator_1.body)("routesNumber").isInt({ min: 1 }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -130,7 +130,7 @@ exports.parkRouter.post("/", user_router_1.authenticateToken, (0, express_valida
     }
 }));
 // Update PUT
-exports.parkRouter.put("/:id", user_router_1.authenticateToken, (0, express_validator_1.param)("id").isNumeric(), (0, express_validator_1.body)("workHours").optional(), (0, express_validator_1.body)("City").optional().isString(), (0, express_validator_1.body)("Street").optional().isString(), (0, express_validator_1.body)("Number").optional().isString(), (0, express_validator_1.body)("routesNumber").optional().isInt({ min: 1 }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.parkRouter.put("/:id", user_router_1.authenticateTokenAdmin, (0, express_validator_1.param)("id").isNumeric(), (0, express_validator_1.body)("workHours").optional(), (0, express_validator_1.body)("City").optional().isString(), (0, express_validator_1.body)("Street").optional().isString(), (0, express_validator_1.body)("Number").optional().isString(), (0, express_validator_1.body)("routesNumber").optional().isInt({ min: 1 }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -149,7 +149,7 @@ exports.parkRouter.put("/:id", user_router_1.authenticateToken, (0, express_vali
     }
 }));
 // Delete park DELETE
-exports.parkRouter.delete("/:id", user_router_1.authenticateToken, (0, express_validator_1.param)("id").isNumeric(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.parkRouter.delete("/:id", user_router_1.authenticateTokenAdmin, (0, express_validator_1.param)("id").isNumeric(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = parseInt(req.params.id, 10);
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
@@ -167,7 +167,7 @@ exports.parkRouter.delete("/:id", user_router_1.authenticateToken, (0, express_v
     }
 }));
 // Edge cases for Post,put,patch,delete
-exports.parkRouter.post("/:id", (0, express_validator_1.param)("id").isNumeric(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.parkRouter.post("/:id", user_router_1.authenticateTokenAdmin, (0, express_validator_1.param)("id").isNumeric(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = parseInt(req.params.id, 10);
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {

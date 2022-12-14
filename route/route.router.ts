@@ -1,6 +1,7 @@
 import express from "express";
 import { Request,Response } from "express";
 import {body, validationResult,param} from "express-validator";
+import { authenticateTokenAdmin } from "../user/user.router";
 import * as routeService from "./route.service";
 
 export const routeRouter = express.Router();
@@ -41,6 +42,7 @@ async (req:Request,res:Response) =>
 
 // POST: Create
 routeRouter.post("/",
+authenticateTokenAdmin,
 body("parkId").isNumeric(),
 body("Stops").isString(),
 body("StartTime").isISO8601().toDate(),
@@ -73,6 +75,7 @@ async (req:Request,res:Response) => {
 // Params : workHours,City,Street,Number,routesNumber
 // Check if there is logic to test return value
 routeRouter.put("/:id",
+authenticateTokenAdmin,
 param("id").isNumeric(),
 body("parkId").optional().isNumeric(),
 body("Stops").optional().isString(),
@@ -104,6 +107,7 @@ async (req:Request,res:Response) => {
 )
 // Delete route DELETE
 routeRouter.delete("/:id",
+authenticateTokenAdmin,
 param("id").isNumeric(),
 async (req:Request,res:Response) => {
     const id : number = parseInt(req.params.id,10);
@@ -128,6 +132,7 @@ async (req:Request,res:Response) => {
 })
 // Edge cases for Post,put,patch,delete
 routeRouter.post("/:id",
+authenticateTokenAdmin,
 param("id").isNumeric(),
 async (req:Request,res:Response) => {
     const errors = validationResult(req)

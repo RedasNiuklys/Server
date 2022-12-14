@@ -1,4 +1,5 @@
-import {park, prisma, Prisma, PrismaClient} from "@prisma/client"
+import {likedbusses, park, prisma, Prisma, PrismaClient} from "@prisma/client"
+import { businessprofileperformance } from "googleapis/build/src/apis/businessprofileperformance";
 import { getPark } from "../park/park.service";
 import { getRoute } from "../route/route.service";
 
@@ -12,6 +13,11 @@ export type BusDTO = {
     StandingSpaces  : number,
     SittingSpaces : number
     WC : boolean
+};
+export type LikedBusDTO = {
+    Id : number,
+    userId : number,
+    busId : string
 };
 
 export const listBusses = async() : Promise<BusDTO[]> => {
@@ -153,6 +159,40 @@ export const deleteBus = async (VIN : string)  : Promise<BusDTO | null> =>
             StandingSpaces  : true,
             SittingSpaces : true,
             WC : true
+        }
+    })
+}
+export const getLikedBusses = async (userId : number)  : Promise<likedbusses[] | null> =>
+{
+    return db.likedbusses.findMany({
+        where :
+        {
+            userId : userId
+        },
+        include :
+        {
+            bus: true
+        }
+    });
+}
+export const createLikedBus = async (userId : number,busId : string) : Promise<likedbusses | null> =>
+{
+    const checkIfExist = await getBus(busId);
+    if(checkIfExist)
+    {
+        return null;
+    }
+    return db.likedbusses.create({
+        data:
+        {
+            userId,
+            busId
+        },
+        select:
+        {
+            Id : true,
+            userId : true,
+            busId : true
         }
     })
 }

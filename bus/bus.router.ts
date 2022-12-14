@@ -1,6 +1,7 @@
 import express from "express";
 import { Request,Response } from "express";
 import {body, validationResult,param} from "express-validator";
+import { authenticateTokenAdmin, authenticateTokenCurrUser } from "../user/user.router";
 import * as busService from "./bus.service";
 
 export const busRouter = express.Router();
@@ -41,6 +42,7 @@ async (req:Request,res:Response) =>
 
 // POST: Create
 busRouter.post("/",
+authenticateTokenAdmin,
 body("VIN").isLength({min : 11, max : 17}).isString(),
 body("routeId").isInt({min : 1}),
 body("Tech_Inspection").isISO8601().toDate(),
@@ -67,9 +69,37 @@ async (req:Request,res:Response) => {
     }
 }
 );
+busRouter.post("/:userId/:id",
+param("id").isLength({min : 11, max : 17}).isString(),
+param("userId").isNumeric(),
+async (req:Request,res:Response) => {
+    const errors = validationResult(req);
+    const id = req.params.id;
+    const userId = Number(req.params.userId);
+    authenticateTokenCurrUser(userId,req,res);
+    if(res.statusCode != 200)
+    {
+        
+    }
+    if(!errors.isEmpty()){
+        return res.status(400).json({errors : errors.array()})
+    }
+    try{
+        const newBus= await busService.createLikedBus(userId,id);
+        if(newBus == null){
+            return res.status(400).json("Specified VIN already exist");
+        }
+        return res.status(201).json(newBus);
+    }
+    catch(error : any)
+    {
+        return res.status(500).json(error.message)
+    }
+});
 
 // Update PUT
 busRouter.put("/:id",
+authenticateTokenAdmin,
 param("id").isLength({min : 11, max : 17}).isString(),
 body("routeId").optional().isInt({min : 1}),
 body("Tech_Inspection").optional().isISO8601().toDate(),
@@ -99,6 +129,7 @@ async (req:Request,res:Response) => {
 )
 // Delete bus DELETE
 busRouter.delete("/:id",
+authenticateTokenAdmin,
 param("id").isLength({min : 11, max : 17}).isString(),
 async (req:Request,res:Response) => {
     const errors = validationResult(req)
@@ -119,6 +150,7 @@ async (req:Request,res:Response) => {
     }
     
 })
+
 // Edge cases for Post,put,patch,delete
 busRouter.post("/:id",
 param("id").isLength({min : 11, max : 17}).isString(),
@@ -130,6 +162,7 @@ async (req:Request,res:Response) => {
     const bus = await busService.getBus(req.params.id);
     if(bus)
     {
+        
         return res.status(409).json("There is already entry with this id");
     }
     return res.status(404).json("Bus with given Id was not found");

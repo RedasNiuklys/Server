@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteBus = exports.updateBus = exports.createBus = exports.getBus = exports.listBusses = void 0;
+exports.createLikedBus = exports.getLikedBusses = exports.deleteBus = exports.updateBus = exports.createBus = exports.getBus = exports.listBusses = void 0;
 const client_1 = require("@prisma/client");
 const route_service_1 = require("../route/route.service");
 const db = new client_1.PrismaClient();
@@ -145,3 +145,32 @@ const deleteBus = (VIN) => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 exports.deleteBus = deleteBus;
+const getLikedBusses = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    return db.likedbusses.findMany({
+        where: {
+            userId: userId
+        },
+        include: {
+            bus: true
+        }
+    });
+});
+exports.getLikedBusses = getLikedBusses;
+const createLikedBus = (userId, busId) => __awaiter(void 0, void 0, void 0, function* () {
+    const checkIfExist = yield (0, exports.getBus)(busId);
+    if (checkIfExist) {
+        return null;
+    }
+    return db.likedbusses.create({
+        data: {
+            userId,
+            busId
+        },
+        select: {
+            Id: true,
+            userId: true,
+            busId: true
+        }
+    });
+});
+exports.createLikedBus = createLikedBus;

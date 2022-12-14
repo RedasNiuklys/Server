@@ -38,6 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.busRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const express_validator_1 = require("express-validator");
+const user_router_1 = require("../user/user.router");
 const busService = __importStar(require("./bus.service"));
 exports.busRouter = express_1.default.Router();
 exports.busRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -67,7 +68,7 @@ exports.busRouter.get("/:id", (0, express_validator_1.param)("id").isLength({ mi
     }
 }));
 // POST: Create
-exports.busRouter.post("/", (0, express_validator_1.body)("VIN").isLength({ min: 11, max: 17 }).isString(), (0, express_validator_1.body)("routeId").isInt({ min: 1 }), (0, express_validator_1.body)("Tech_Inspection").isISO8601().toDate(), (0, express_validator_1.body)("Mileage").isInt({ min: 0 }), (0, express_validator_1.body)("StandingSpaces").isInt({ min: 0 }), (0, express_validator_1.body)("SittingSpaces").isInt({ min: 0 }), (0, express_validator_1.body)("WC").isBoolean(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.busRouter.post("/", user_router_1.authenticateTokenAdmin, (0, express_validator_1.body)("VIN").isLength({ min: 11, max: 17 }).isString(), (0, express_validator_1.body)("routeId").isInt({ min: 1 }), (0, express_validator_1.body)("Tech_Inspection").isISO8601().toDate(), (0, express_validator_1.body)("Mileage").isInt({ min: 0 }), (0, express_validator_1.body)("StandingSpaces").isInt({ min: 0 }), (0, express_validator_1.body)("SittingSpaces").isInt({ min: 0 }), (0, express_validator_1.body)("WC").isBoolean(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -84,8 +85,29 @@ exports.busRouter.post("/", (0, express_validator_1.body)("VIN").isLength({ min:
         return res.status(500).json(error.message);
     }
 }));
+exports.busRouter.post("/:userId/:id", (0, express_validator_1.param)("id").isLength({ min: 11, max: 17 }).isString(), (0, express_validator_1.param)("userId").isNumeric(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const errors = (0, express_validator_1.validationResult)(req);
+    const id = req.params.id;
+    const userId = Number(req.params.userId);
+    (0, user_router_1.authenticateTokenCurrUser)(userId, req, res);
+    if (res.statusCode != 200) {
+    }
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    try {
+        const newBus = yield busService.createLikedBus(userId, id);
+        if (newBus == null) {
+            return res.status(400).json("Specified VIN already exist");
+        }
+        return res.status(201).json(newBus);
+    }
+    catch (error) {
+        return res.status(500).json(error.message);
+    }
+}));
 // Update PUT
-exports.busRouter.put("/:id", (0, express_validator_1.param)("id").isLength({ min: 11, max: 17 }).isString(), (0, express_validator_1.body)("routeId").optional().isInt({ min: 1 }), (0, express_validator_1.body)("Tech_Inspection").optional().isISO8601().toDate(), (0, express_validator_1.body)("Mileage").optional().isInt({ min: 0 }), (0, express_validator_1.body)("StandingSpaces").optional().isInt({ min: 0 }), (0, express_validator_1.body)("SittingSpaces").optional().isInt({ min: 0 }), (0, express_validator_1.body)("WC").optional().isBoolean(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.busRouter.put("/:id", user_router_1.authenticateTokenAdmin, (0, express_validator_1.param)("id").isLength({ min: 11, max: 17 }).isString(), (0, express_validator_1.body)("routeId").optional().isInt({ min: 1 }), (0, express_validator_1.body)("Tech_Inspection").optional().isISO8601().toDate(), (0, express_validator_1.body)("Mileage").optional().isInt({ min: 0 }), (0, express_validator_1.body)("StandingSpaces").optional().isInt({ min: 0 }), (0, express_validator_1.body)("SittingSpaces").optional().isInt({ min: 0 }), (0, express_validator_1.body)("WC").optional().isBoolean(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -103,7 +125,7 @@ exports.busRouter.put("/:id", (0, express_validator_1.param)("id").isLength({ mi
     }
 }));
 // Delete bus DELETE
-exports.busRouter.delete("/:id", (0, express_validator_1.param)("id").isLength({ min: 11, max: 17 }).isString(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.busRouter.delete("/:id", user_router_1.authenticateTokenAdmin, (0, express_validator_1.param)("id").isLength({ min: 11, max: 17 }).isString(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });

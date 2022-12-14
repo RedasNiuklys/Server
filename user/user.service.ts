@@ -1,10 +1,6 @@
-import {park, prisma, Prisma, PrismaClient} from "@prisma/client"
-import { start } from "repl";
-import { getPark } from "../park/park.service";
+import {PrismaClient} from "@prisma/client"
+
 import bcrypt from "bcrypt";
-
-
-
 
 const db = new PrismaClient();
 
@@ -13,20 +9,20 @@ export type UserDTO = {
     Email : string,
     Username : string,
     Password : string,
-    IsAdmin : boolean,
-
+    AccessLevel : number;
 };
+
 export type UserDTOToken = {
     Id : number,
     Email : string,
-    IsAdmin : boolean,
+    AccessLevel : number,
 
 }
-export const login =async (email :string ) : Promise<UserDTO | null> =>{
+export const checkEmail = async (Email :string) : Promise<UserDTO | null> =>{
     return db.user.findFirst( 
         {
             where : {
-                Email : email
+                Email  
             },
             select:
             {
@@ -34,26 +30,41 @@ export const login =async (email :string ) : Promise<UserDTO | null> =>{
                 Email : true,
                 Username : true,
                 Password : true,
-                IsAdmin : true
+                AccessLevel : true
             }
         }
     )
 }
+export const login = async(email: string,pass : string) : Promise<UserDTO | null> =>
+{
+    const saltRounds = 8;
+    var password :string  = await bcrypt.hash(pass, saltRounds);
+    console.log(password)
+    var user = await checkEmail(email);
+    console.log(user);
+    if(user)
+    {
+        if(await bcrypt.compare(pass,user.Password))
+        return user;
+        else return null;
+    }
+    return null;
+}
 export const createUser = async (user : Omit<UserDTO,"Id">) : Promise<UserDTO | null> =>
 {
-    const {Email,Username,IsAdmin} = user
+    const {Email,Username,Password} = user
     const saltRounds = 8
-    var Password : string = user.Password;
-    var Password : string = await bcrypt.hash(Password, saltRounds);
-    const userLog = login(Email);
+    var password : string = await bcrypt.hash(Password, saltRounds);
+    console.log(password.length);
+    const userLog = await checkEmail(Email);
+    console.log(userLog);
     if(userLog != null ) return null;
 
     return db.user.create({
         data:{
             Email,
             Username,
-            Password,
-            IsAdmin
+            Password : password,
             
         },
         select:{
@@ -61,8 +72,67 @@ export const createUser = async (user : Omit<UserDTO,"Id">) : Promise<UserDTO | 
             Email : true,
             Username : true,
             Password : true,
-            IsAdmin : true
+            AccessLevel : true
         }
     })
 }
+export const getUser  =async (id : number ) : Promise<UserDTO | null> =>{
+    return db.user.findFirst( 
+        {
+            where : {
+                Id : id
+            },
+            select:
+            {
+                Id : true,
+                Email : true,
+                Username : true,
+                Password : true,
+                AccessLevel : true
+            }
+        }
+    )
+}
+export const updateUser  =async (id : number,userData : UserDTO ) : Promise<UserDTO | null> =>{
+    const {Email,Username,Password,AccessLevel} = userData
+    return db.user.update( 
+        {
+            where : {
+                Id : id
+            },
+            data:{
+                Email,
+                Username,
+                Password,
+                AccessLevel
+                
+            },
+            select:{
+                Id : true,
+                Email : true,
+                Username : true,
+                Password : true,
+                AccessLevel : true
+            }
+            });
+}
+
+export const deleteUser  =async (id : number ) : Promise<UserDTO | null> =>{
+    return db.user.findFirst( 
+        {
+            where : {
+                Id : id
+            },
+            select:
+            {
+                Id : true,
+                Email : true,
+                Username : true,
+                Password : true,
+                AccessLevel : true
+            }
+        }
+    );
+}
+
 

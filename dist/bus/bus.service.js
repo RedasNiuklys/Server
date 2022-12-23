@@ -23,7 +23,11 @@ const listBusses = () => __awaiter(void 0, void 0, void 0, function* () {
             Mileage: true,
             StandingSpaces: true,
             SittingSpaces: true,
-            WC: true
+            WC: true,
+            StartTime: true,
+            EndTime: true,
+            Late: true,
+            LateBy: true
         }
     });
 });
@@ -41,13 +45,17 @@ const getBus = (VIN) => __awaiter(void 0, void 0, void 0, function* () {
             Mileage: true,
             StandingSpaces: true,
             SittingSpaces: true,
-            WC: true
+            WC: true,
+            StartTime: true,
+            EndTime: true,
+            Late: true,
+            LateBy: true
         }
     });
 });
 exports.getBus = getBus;
 const createBus = (bus) => __awaiter(void 0, void 0, void 0, function* () {
-    const { VIN, routeId, NumberPlate, Tech_Inspection, Mileage, StandingSpaces, SittingSpaces, WC } = bus;
+    const { VIN, routeId, NumberPlate, Tech_Inspection, Mileage, StandingSpaces, SittingSpaces, WC, StartTime, EndTime, Late, LateBy } = bus;
     const checkIfExist = yield (0, exports.getBus)(bus.VIN);
     if (checkIfExist) {
         return null;
@@ -68,7 +76,11 @@ const createBus = (bus) => __awaiter(void 0, void 0, void 0, function* () {
             Mileage,
             StandingSpaces,
             SittingSpaces,
-            WC
+            WC,
+            StartTime,
+            EndTime,
+            Late,
+            LateBy
         },
         select: {
             VIN: true,
@@ -78,7 +90,11 @@ const createBus = (bus) => __awaiter(void 0, void 0, void 0, function* () {
             Mileage: true,
             StandingSpaces: true,
             SittingSpaces: true,
-            WC: true
+            WC: true,
+            StartTime: true,
+            EndTime: true,
+            Late: true,
+            LateBy: true
         }
     });
 });
@@ -88,7 +104,7 @@ const updateBus = (bus, VIN) => __awaiter(void 0, void 0, void 0, function* () {
     if (!checkIfExist) {
         return null;
     }
-    const { routeId, NumberPlate, Tech_Inspection, Mileage, StandingSpaces, SittingSpaces, WC } = bus;
+    const { routeId, NumberPlate, Tech_Inspection, Mileage, StandingSpaces, SittingSpaces, WC, StartTime, EndTime, Late, LateBy } = bus;
     if (routeId == null) {
         return null;
     }
@@ -108,7 +124,11 @@ const updateBus = (bus, VIN) => __awaiter(void 0, void 0, void 0, function* () {
             Mileage,
             StandingSpaces,
             SittingSpaces,
-            WC
+            WC,
+            StartTime,
+            EndTime,
+            Late,
+            LateBy
         },
         select: {
             VIN: true,
@@ -118,7 +138,11 @@ const updateBus = (bus, VIN) => __awaiter(void 0, void 0, void 0, function* () {
             Mileage: true,
             StandingSpaces: true,
             SittingSpaces: true,
-            WC: true
+            WC: true,
+            StartTime: true,
+            EndTime: true,
+            Late: true,
+            LateBy: true
         }
     });
 });
@@ -140,7 +164,11 @@ const deleteBus = (VIN) => __awaiter(void 0, void 0, void 0, function* () {
             Mileage: true,
             StandingSpaces: true,
             SittingSpaces: true,
-            WC: true
+            WC: true,
+            StartTime: true,
+            EndTime: true,
+            Late: true,
+            LateBy: true
         }
     });
 });

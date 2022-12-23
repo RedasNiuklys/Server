@@ -8,10 +8,6 @@ export type RouteDTO = {
     Id : number,
     parkId : number,
     Stops :string,
-    StartTime : Date,
-    EndTime :Date,
-    Late :boolean,
-    LateBy : Date | null,
     International : boolean
 };
 
@@ -21,10 +17,6 @@ export const listRoutes = async() : Promise<RouteDTO[]> => {
             Id : true,
             parkId : true,
             Stops :true,
-            StartTime : true,
-            EndTime :true,
-            Late :true,
-            LateBy : true,
             International :true
         }
     });
@@ -40,10 +32,6 @@ export const getRoute =async (id :number) : Promise<RouteDTO | null> =>{
                 Id : true,
                 parkId : true,
                 Stops :true,
-                StartTime : true,
-                EndTime :true,
-                Late :true,
-                LateBy : true,
                 International :true
             }
         }
@@ -51,7 +39,7 @@ export const getRoute =async (id :number) : Promise<RouteDTO | null> =>{
 }
 export const createRoute = async (route : Omit<RouteDTO,"Id">) : Promise<RouteDTO | null> =>
 {
-    const {parkId,Stops,StartTime,EndTime,Late,LateBy,International} = route
+    const {parkId,Stops,International} = route
     const park = await getPark(parkId);
     if(!park){
         return null;
@@ -60,21 +48,12 @@ export const createRoute = async (route : Omit<RouteDTO,"Id">) : Promise<RouteDT
         data:{
             parkId,
             Stops,
-            StartTime,
-            EndTime,
-            Late,
-            LateBy,
-            International,
-            
+            International            
         },
         select:{
             Id : true,
             parkId : true,
             Stops :true,
-            StartTime : true,
-            EndTime :true,
-            Late :true,
-            LateBy : true,
             International :true
         }
     })
@@ -86,7 +65,7 @@ export const updateRoute =async (route:Omit<RouteDTO,"Id">, id : number) : Promi
     {
         return null;
     }
-    const {parkId,Stops,StartTime,EndTime,Late,LateBy,International} = route
+    const {parkId,Stops,International} = route
     if(parkId)
     {
         const park = await getPark(parkId);
@@ -102,10 +81,6 @@ export const updateRoute =async (route:Omit<RouteDTO,"Id">, id : number) : Promi
         data:{
             parkId,
             Stops,
-            StartTime,
-            EndTime,
-            Late,
-            LateBy,
             International,
             
         },
@@ -113,10 +88,6 @@ export const updateRoute =async (route:Omit<RouteDTO,"Id">, id : number) : Promi
             Id : true,
             parkId : true,
             Stops :true,
-            StartTime : true,
-            EndTime :true,
-            Late :true,
-            LateBy : true,
             International :true
         }
     });
@@ -136,10 +107,6 @@ export const deleteRoute = async (id :number)  : Promise<RouteDTO | null> =>
             Id : true,
             parkId : true,
             Stops :true,
-            StartTime : true,
-            EndTime :true,
-            Late :true,
-            LateBy : true,
             International :true
         }
     })

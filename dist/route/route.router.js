@@ -69,7 +69,7 @@ exports.routeRouter.get("/:id", (0, express_validator_1.param)("id").isNumeric()
     }
 }));
 // POST: Create
-exports.routeRouter.post("/", user_router_1.authenticateTokenAdmin, (0, express_validator_1.body)("parkId").isNumeric(), (0, express_validator_1.body)("Stops").isString(), (0, express_validator_1.body)("StartTime").isISO8601().toDate(), (0, express_validator_1.body)("EndTime").isISO8601().toDate(), (0, express_validator_1.body)("Late").isBoolean(), (0, express_validator_1.body)("International").isBoolean(), (0, express_validator_1.body)("LateBy").isISO8601().toDate(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.routeRouter.post("/", user_router_1.authenticateTokenAdmin, (0, express_validator_1.body)("parkId").isNumeric(), (0, express_validator_1.body)("Stops").isString(), (0, express_validator_1.body)("International").isBoolean(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -89,7 +89,7 @@ exports.routeRouter.post("/", user_router_1.authenticateTokenAdmin, (0, express_
 // Update PUT
 // Params : workHours,City,Street,Number,routesNumber
 // Check if there is logic to test return value
-exports.routeRouter.put("/:id", user_router_1.authenticateTokenAdmin, (0, express_validator_1.param)("id").isNumeric(), (0, express_validator_1.body)("parkId").optional().isNumeric(), (0, express_validator_1.body)("Stops").optional().isString(), (0, express_validator_1.body)("StartTime").optional().isISO8601().toDate(), (0, express_validator_1.body)("EndTime").optional().isISO8601().toDate(), (0, express_validator_1.body)("Late").optional().isBoolean(), (0, express_validator_1.body)("International").optional().isBoolean(), (0, express_validator_1.body)("LateBy").optional().isISO8601().toDate(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.routeRouter.put("/:id", user_router_1.authenticateTokenAdmin, (0, express_validator_1.param)("id").isNumeric(), (0, express_validator_1.body)("parkId").optional().isNumeric(), (0, express_validator_1.body)("Stops").optional().isString(), (0, express_validator_1.body)("International").optional().isBoolean(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });

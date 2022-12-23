@@ -21,7 +21,7 @@ async (req:Request,res:Response) =>
     const errors = validationResult(req)
     const email = req.body.Email;
     const password= req.body.Password;
-
+    console.log(req.body)
     if(!errors.isEmpty()){
         return res.status(400).json({errors : errors.array()})
     }
@@ -30,21 +30,28 @@ async (req:Request,res:Response) =>
     {
         return res.status(401).json("Wrong email or password");
     }
-    const token = generateAccessToken(req.body);
+    // console.log(user.Email)
+    const token = generateAccessToken(user);
+    // console.log("Message",token);
 
-    return res.status(200).json("Can Login");
+    return res.status(200).json(token);
 })
 
 // POST: Create
-userRouter.post("/register", async (req:Request,res:Response) => {
+userRouter.post("/register",
+body("Email").isString(),
+body("Username").isString(),
+body("Password").isString(),
+ async (req:Request,res:Response) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         return res.status(400).json({errors : errors.array()})
     }
     try{
         const user = req.body;
-        console.log(user);
+        // console.log(user);
         const newUser = await userService.createUser(user);
+        console.log(newUser);
         if(!newUser){
             return res.status(400).json("There is already user with this Email");
         }
@@ -58,7 +65,7 @@ userRouter.post("/register", async (req:Request,res:Response) => {
 );
 userRouter.post('/createNewUser', async (req:Request,res:Response)  => {
     const token = generateAccessToken(req.body);
-    console.log(req.body);
+    // console.log(req.body);
     res.json(token);
   });
 
@@ -76,7 +83,7 @@ export function authenticateTokenAdmin(req : Request, res : Response, next : Nex
         const decoded = jwt.verify(token, process.env.TOKEN_SECRET) 
         console.log(decoded);
 
-        if(decoded.accessLevel !=  2)
+        if(decoded.AccessLevel >  2)
         {
             return res.status(403).json("Permission denied");   
         }
@@ -93,7 +100,7 @@ export function authenticateTokenCurrUser(userId : number,req : Request, res : R
     try{
 
         const decoded = jwt.verify(token, process.env.TOKEN_SECRET) 
-        console.log(decoded);
+        // console.log(decoded);
 
         if(decoded.id !=  userId)
         {

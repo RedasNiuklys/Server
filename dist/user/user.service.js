@@ -34,9 +34,9 @@ exports.checkEmail = checkEmail;
 const login = (email, pass) => __awaiter(void 0, void 0, void 0, function* () {
     const saltRounds = 8;
     var password = yield bcrypt_1.default.hash(pass, saltRounds);
-    console.log(password);
+    // console.log(password)
     var user = yield (0, exports.checkEmail)(email);
-    console.log(user);
+    // console.log(user);
     if (user) {
         if (yield bcrypt_1.default.compare(pass, user.Password))
             return user;
@@ -50,7 +50,7 @@ const createUser = (user) => __awaiter(void 0, void 0, void 0, function* () {
     const { Email, Username, Password } = user;
     const saltRounds = 8;
     var password = yield bcrypt_1.default.hash(Password, saltRounds);
-    console.log(password.length);
+    // console.log(password.length);
     const userLog = yield (0, exports.checkEmail)(Email);
     console.log(userLog);
     if (userLog != null)

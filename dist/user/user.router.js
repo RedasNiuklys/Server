@@ -50,6 +50,7 @@ exports.userRouter.post("/login", (0, express_validator_1.body)("Email").isStrin
     const errors = (0, express_validator_1.validationResult)(req);
     const email = req.body.Email;
     const password = req.body.Password;
+    console.log(req.body);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
@@ -57,17 +58,22 @@ exports.userRouter.post("/login", (0, express_validator_1.body)("Email").isStrin
     if (user == null) {
         return res.status(401).json("Wrong email or password");
     }
-    return res.status(200).json("Can Login");
+    // console.log(user.Email)
+    const token = generateAccessToken(user);
+    // console.log("Message",token);
+    return res.status(200).json(token);
 }));
 // POST: Create
-exports.userRouter.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.userRouter.post("/register", (0, express_validator_1.body)("Email").isString(), (0, express_validator_1.body)("Username").isString(), (0, express_validator_1.body)("Password").isString(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
     try {
         const user = req.body;
+        // console.log(user);
         const newUser = yield userService.createUser(user);
+        console.log(newUser);
         if (!newUser) {
             return res.status(400).json("There is already user with this Email");
         }
@@ -78,14 +84,9 @@ exports.userRouter.post("/register", (req, res) => __awaiter(void 0, void 0, voi
     }
 }));
 exports.userRouter.post('/createNewUser', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // ...
-    // console.log(req.body.Email);
-    // console.log(process.env.TOKEN_SECRET)
-    // console.log(req.body.AccessLevel)
     const token = generateAccessToken(req.body);
-    console.log(req.body);
+    // console.log(req.body);
     res.json(token);
-    // ...
 }));
 function generateAccessToken(user) {
     return jwt.sign({ id: user.Id, email: user.Email, AccessLevel: user.AccessLevel }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
@@ -100,7 +101,7 @@ function authenticateTokenAdmin(req, res, next) {
         //console.log(process.env.TOKEN_SECRET);
         const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
         console.log(decoded);
-        if (decoded.accessLevel != 2) {
+        if (decoded.AccessLevel > 2) {
             return res.status(403).json("Permission denied");
         }
         res.setHeader("Authorization", token);
@@ -118,7 +119,7 @@ function authenticateTokenCurrUser(userId, req, res) {
         return res.status(401).json("You need viable token");
     try {
         const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
-        console.log(decoded);
+        // console.log(decoded);
         if (decoded.id != userId) {
             return res.status(403).json("Permission denied");
         }

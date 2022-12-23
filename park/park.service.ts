@@ -55,10 +55,6 @@ export const listRoutesByPark =async (id :number) : Promise<RouteDTO[] | null> =
             Id : true,
             parkId : true,
             Stops :true,
-            StartTime : true,
-            EndTime :true,
-            Late :true,
-            LateBy : true,
             International :true
         }
     });
@@ -81,7 +77,11 @@ export const listBussesByRoute =async (parkId:number,id:number): Promise<BusDTO[
             Mileage : true,
             StandingSpaces  : true,
             SittingSpaces : true,
-            WC : true
+            WC : true,
+            StartTime : true,
+            EndTime :true,
+            Late :true,
+            LateBy : true
         }
     });
 }

@@ -45,12 +45,7 @@ routeRouter.post("/",
 authenticateTokenAdmin,
 body("parkId").isNumeric(),
 body("Stops").isString(),
-body("StartTime").isISO8601().toDate(),
-body("EndTime").isISO8601().toDate(),
-body("Late").isBoolean(),
 body("International").isBoolean(),
-body("LateBy").isISO8601().toDate()
-,
 async (req:Request,res:Response) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -79,11 +74,7 @@ authenticateTokenAdmin,
 param("id").isNumeric(),
 body("parkId").optional().isNumeric(),
 body("Stops").optional().isString(),
-body("StartTime").optional().isISO8601().toDate(),
-body("EndTime").optional().isISO8601().toDate(),
-body("Late").optional().isBoolean(),
 body("International").optional().isBoolean(),
-body("LateBy").optional().isISO8601().toDate(),
 async (req:Request,res:Response) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){

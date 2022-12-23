@@ -16,7 +16,6 @@ export type UserDTOToken = {
     Id : number,
     Email : string,
     AccessLevel : number,
-
 }
 export const checkEmail = async (Email :string) : Promise<UserDTO | null> =>{
     return db.user.findFirst( 
@@ -39,9 +38,9 @@ export const login = async(email: string,pass : string) : Promise<UserDTO | null
 {
     const saltRounds = 8;
     var password :string  = await bcrypt.hash(pass, saltRounds);
-    console.log(password)
+    // console.log(password)
     var user = await checkEmail(email);
-    console.log(user);
+    // console.log(user);
     if(user)
     {
         if(await bcrypt.compare(pass,user.Password))
@@ -55,7 +54,7 @@ export const createUser = async (user : Omit<UserDTO,"Id">) : Promise<UserDTO | 
     const {Email,Username,Password} = user
     const saltRounds = 8
     var password : string = await bcrypt.hash(Password, saltRounds);
-    console.log(password.length);
+    // console.log(password.length);
     const userLog = await checkEmail(Email);
     console.log(userLog);
     if(userLog != null ) return null;

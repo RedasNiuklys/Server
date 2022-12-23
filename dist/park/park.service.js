@@ -49,10 +49,6 @@ const listRoutesByPark = (id) => __awaiter(void 0, void 0, void 0, function* () 
             Id: true,
             parkId: true,
             Stops: true,
-            StartTime: true,
-            EndTime: true,
-            Late: true,
-            LateBy: true,
             International: true
         }
     });
@@ -77,7 +73,11 @@ const listBussesByRoute = (parkId, id) => __awaiter(void 0, void 0, void 0, func
             Mileage: true,
             StandingSpaces: true,
             SittingSpaces: true,
-            WC: true
+            WC: true,
+            StartTime: true,
+            EndTime: true,
+            Late: true,
+            LateBy: true
         }
     });
 });

@@ -19,10 +19,6 @@ const listRoutes = () => __awaiter(void 0, void 0, void 0, function* () {
             Id: true,
             parkId: true,
             Stops: true,
-            StartTime: true,
-            EndTime: true,
-            Late: true,
-            LateBy: true,
             International: true
         }
     });
@@ -37,17 +33,13 @@ const getRoute = (id) => __awaiter(void 0, void 0, void 0, function* () {
             Id: true,
             parkId: true,
             Stops: true,
-            StartTime: true,
-            EndTime: true,
-            Late: true,
-            LateBy: true,
             International: true
         }
     });
 });
 exports.getRoute = getRoute;
 const createRoute = (route) => __awaiter(void 0, void 0, void 0, function* () {
-    const { parkId, Stops, StartTime, EndTime, Late, LateBy, International } = route;
+    const { parkId, Stops, International } = route;
     const park = yield (0, park_service_1.getPark)(parkId);
     if (!park) {
         return null;
@@ -56,20 +48,12 @@ const createRoute = (route) => __awaiter(void 0, void 0, void 0, function* () {
         data: {
             parkId,
             Stops,
-            StartTime,
-            EndTime,
-            Late,
-            LateBy,
-            International,
+            International
         },
         select: {
             Id: true,
             parkId: true,
             Stops: true,
-            StartTime: true,
-            EndTime: true,
-            Late: true,
-            LateBy: true,
             International: true
         }
     });
@@ -80,7 +64,7 @@ const updateRoute = (route, id) => __awaiter(void 0, void 0, void 0, function* (
     if (!findIfExists) {
         return null;
     }
-    const { parkId, Stops, StartTime, EndTime, Late, LateBy, International } = route;
+    const { parkId, Stops, International } = route;
     if (parkId) {
         const park = yield (0, park_service_1.getPark)(parkId);
         if (!park) {
@@ -94,20 +78,12 @@ const updateRoute = (route, id) => __awaiter(void 0, void 0, void 0, function* (
         data: {
             parkId,
             Stops,
-            StartTime,
-            EndTime,
-            Late,
-            LateBy,
             International,
         },
         select: {
             Id: true,
             parkId: true,
             Stops: true,
-            StartTime: true,
-            EndTime: true,
-            Late: true,
-            LateBy: true,
             International: true
         }
     });
@@ -126,10 +102,6 @@ const deleteRoute = (id) => __awaiter(void 0, void 0, void 0, function* () {
             Id: true,
             parkId: true,
             Stops: true,
-            StartTime: true,
-            EndTime: true,
-            Late: true,
-            LateBy: true,
             International: true
         }
     });

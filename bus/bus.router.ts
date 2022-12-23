@@ -50,6 +50,10 @@ body("Mileage").isInt({min : 0}),
 body("StandingSpaces").isInt({min : 0}),
 body("SittingSpaces").isInt({min :0}),
 body("WC").isBoolean(),
+body("StartTime").optional().isISO8601().toDate(),
+body("EndTime").optional().isISO8601().toDate(),
+body("Late").optional().isBoolean(),
+body("LateBy").optional().isISO8601().toDate(),
 async (req:Request,res:Response) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -107,6 +111,10 @@ body("Mileage").optional().isInt({min : 0}),
 body("StandingSpaces").optional().isInt({min : 0}),
 body("SittingSpaces").optional().isInt({min :0}),
 body("WC").optional().isBoolean(),
+body("StartTime").optional().isISO8601().toDate(),
+body("EndTime").optional().isISO8601().toDate(),
+body("Late").optional().isBoolean(),
+body("LateBy").optional().isISO8601().toDate(),
 async (req:Request,res:Response) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){

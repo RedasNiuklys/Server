@@ -1,6 +1,4 @@
-import {likedbusses, park, prisma, Prisma, PrismaClient} from "@prisma/client"
-import { businessprofileperformance } from "googleapis/build/src/apis/businessprofileperformance";
-import { getPark } from "../park/park.service";
+import {likedbusses, bus, PrismaClient} from "@prisma/client"
 import { getRoute } from "../route/route.service";
 
 const db = new PrismaClient();
@@ -12,7 +10,11 @@ export type BusDTO = {
     Mileage : number
     StandingSpaces  : number,
     SittingSpaces : number
-    WC : boolean
+    WC : boolean,
+    StartTime : Date,
+    EndTime :Date,
+    Late :boolean,
+    LateBy : Date | null
 };
 export type LikedBusDTO = {
     Id : number,
@@ -30,7 +32,11 @@ export const listBusses = async() : Promise<BusDTO[]> => {
             Mileage : true,
             StandingSpaces  : true,
             SittingSpaces : true,
-            WC : true
+            WC : true,
+            StartTime : true,
+            EndTime :true,
+            Late :true,
+            LateBy : true
         }
     });
 }
@@ -48,14 +54,18 @@ export const getBus =async (VIN :string) : Promise<BusDTO | null> =>{
                 Mileage : true,
                 StandingSpaces  : true,
                 SittingSpaces : true,
-                WC : true
+                WC : true,
+                StartTime : true,
+                EndTime :true,
+                Late :true,
+                LateBy : true
             }
         }
     )
 }
 export const createBus = async (bus : BusDTO) : Promise<BusDTO | null> =>
 {
-    const {VIN,routeId,NumberPlate,Tech_Inspection,Mileage,StandingSpaces,SittingSpaces,WC} = bus
+    const {VIN,routeId,NumberPlate,Tech_Inspection,Mileage,StandingSpaces,SittingSpaces,WC,StartTime,EndTime,Late,LateBy} = bus
     const checkIfExist = await getBus(bus.VIN);
     if(checkIfExist)
     {
@@ -79,7 +89,11 @@ export const createBus = async (bus : BusDTO) : Promise<BusDTO | null> =>
             Mileage,
             StandingSpaces,
             SittingSpaces,
-            WC
+            WC,
+            StartTime,
+            EndTime,
+            Late,
+            LateBy
         },
         select:
         {
@@ -90,7 +104,11 @@ export const createBus = async (bus : BusDTO) : Promise<BusDTO | null> =>
             Mileage : true,
             StandingSpaces  : true,
             SittingSpaces : true,
-            WC : true
+            WC : true,
+            StartTime : true,
+            EndTime :true,
+            Late :true,
+            LateBy : true
         }
     })
 }
@@ -101,7 +119,7 @@ export const updateBus =async (bus:BusDTO, VIN : string) : Promise<BusDTO | null
     {
         return null;
     }
-    const {routeId,NumberPlate,Tech_Inspection,Mileage,StandingSpaces,SittingSpaces,WC} = bus
+    const {routeId,NumberPlate,Tech_Inspection,Mileage,StandingSpaces,SittingSpaces,WC,StartTime,EndTime,Late,LateBy} = bus
     if(routeId == null)
     {
         return null;
@@ -124,7 +142,11 @@ export const updateBus =async (bus:BusDTO, VIN : string) : Promise<BusDTO | null
             Mileage,
             StandingSpaces,
             SittingSpaces,
-            WC
+            WC,
+            StartTime,
+            EndTime,
+            Late,
+            LateBy
         },
         select:
         {
@@ -135,7 +157,11 @@ export const updateBus =async (bus:BusDTO, VIN : string) : Promise<BusDTO | null
             Mileage : true,
             StandingSpaces  : true,
             SittingSpaces : true,
-            WC : true
+            WC : true,
+            StartTime : true,
+            EndTime :true,
+            Late :true,
+            LateBy : true
         }
     });
 }
@@ -158,7 +184,11 @@ export const deleteBus = async (VIN : string)  : Promise<BusDTO | null> =>
             Mileage : true,
             StandingSpaces  : true,
             SittingSpaces : true,
-            WC : true
+            WC : true,
+            StartTime : true,
+            EndTime :true,
+            Late :true,
+            LateBy : true
         }
     })
 }

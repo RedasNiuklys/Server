@@ -83,7 +83,7 @@ export function authenticateTokenAdmin(req : Request, res : Response, next : Nex
         const decoded = jwt.verify(token, process.env.TOKEN_SECRET) 
         console.log(decoded);
 
-        if(decoded.AccessLevel >  2)
+        if(decoded.AccessLevel <  2)
         {
             return res.status(403).json("Permission denied");   
         }
